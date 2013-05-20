@@ -1,0 +1,29 @@
+-- build.settings for project: TestingStuff
+-- Managed with http://CoronaProjectManager.com
+-- Copyright 2013 . All Rights Reserved.
+
+-- cpmgen build.settings
+settings =
+{
+	android =
+	{
+		versionCode = "2.3"
+	},
+
+	androidPermissions =
+	{
+		"android.permission.ACCESS_NETWORK_STATE",
+		"android.permission.INTERNET"
+
+	},
+
+	orientation =
+	{
+		default ="landscapeLeft",
+		supported =
+		{
+			"landscapeRight"
+		},
+	},
+
+}
