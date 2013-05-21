@@ -933,214 +933,195 @@ function Sudoku:_doHints(matrix, mask, tried, hints)
 	end
 
 function Sudoku:_doMask(matrix, mask)
-		local i		local j		local k		local r		local c		local n = 0		local a		local hints = 0		local cell		local val
-		local avail = Matrix.Create(9)
-		local tried = Matrix.Create(81)
-		-- start with a cleared out board
-		mask.clear()
+	local i	local j	local k	local r	local c	local n = 0	local a	local hints = 0	local cell	local val
+	local avail = Matrix.Create(9)
+	local tried = Matrix.Create(81)
+	-- start with a cleared out board
+	mask.clear()
 
-		-- randomly add values from the solved board to the masked
-		-- board, picking only cells that cannot be deduced by existing
-		-- values in the masked board.
-		--
-		-- the following rules are used to determine the cells to
-		-- populate:
-		-- 1. based on the three zones to which the cell belongs, if
-		-- more than one value can go in the cell (i.e. the selected
-		-- cell value and at least one other value), check rule two.
-		-- 2. for each zone, if the selected value could go in another
-		-- free cell in the zone then the cell may be selected as a
-		-- hint. this rule must be satisfied by all three zones.
-		--
-		-- both rules must pass for a cell to be selected. once all 81
-		-- cells have been checked, the masked board will represent a
-		-- puzzle with a single solution.
+	-- randomly add values from the solved board to the masked
+	-- board, picking only cells that cannot be deduced by existing
+	-- values in the masked board.
+	--
+	-- the following rules are used to determine the cells to
+	-- populate:
+	-- 1. based on the three zones to which the cell belongs, if
+	-- more than one value can go in the cell (i.e. the selected
+	-- cell value and at least one other value), check rule two.
+	-- 2. for each zone, if the selected value could go in another
+	-- free cell in the zone then the cell may be selected as a
+	-- hint. this rule must be satisfied by all three zones.
+	--
+	-- both rules must pass for a cell to be selected. once all 81
+	-- cells have been checked, the masked board will represent a
+	-- puzzle with a single solution.
+	repeat
+		
+		-- choose a cell at random.
 		repeat
+			cell = Math.random( 81 )
+		until (mask[cell] == 0) or (tried[cell] == 0)			
+		val = matrix[cell]
+
+		-- see how many values can go in the cell.
+		i = this:getAvailable(mask, cell, nil)
+
+		if i > 1 then
 		
-			-- choose a cell at random.
-			repeat
-				cell = Math.random( 81 )
-			until (mask[cell] == 0) or (tried[cell] == 0)			
-			val = matrix[cell]
+			-- two or more values can go in the cell based
+			-- on values used in each zone.
+			--
+			-- check each zone and make sure the selected
+			-- value can also be used in at least one other
+			-- cell in the zone.
+			local cnt			local row = Math.floor(cell / 9)			local col = cell % 9
 
-			-- see how many values can go in the cell.
-			i = this:getAvailable(mask, cell, nil)
+			cnt = 0 -- count the cells in which the value
+				 -- may be used.
 
-			if i > 1 then
-			
-				-- two or more values can go in the cell based
-				-- on values used in each zone.
-				--
-				-- check each zone and make sure the selected
-				-- value can also be used in at least one other
-				-- cell in the zone.
-				local cnt				local row = Math.floor(cell / 9), col = cell % 9
+			-- look at each cell in the same row as the
+			-- selected cell.
+			for i = 1, 9, 1 do
+				
+				-- don't bother looking at the selected
+				-- cell. we already know the value will
+				-- work.
+				if i ~= col then
+					j = row * 9 + i -- j stores the cell index
 
-				cnt = 0 -- count the cells in which the value
-					 -- may be used.
-
-				-- look at each cell in the same row as the
-				-- selected cell.
-				for i = 1, 9, 1 do
-					
-					-- don't bother looking at the selected
-					-- cell. we already know the value will
-					-- work.
-					if i ~= col then
-						j = row * 9 + i -- j stores the cell index
+					-- if the value is already filled, skip
+					-- to the next.
+					if mask[j] == 0 then 
+						-- get the values that can be used in
+						-- the cell.
+						a = this.getAvailable(mask, j, avail)
 	
-						-- if the value is already filled, skip
-						-- to the next.
-						if mask[j] == 0 then 
-							-- get the values that can be used in
-							-- the cell.
-							a = this.getAvailable(mask, j, avail)
-		
-							-- see if our value is in the available
-							-- value list.
-							for j = 1,  a,  1 do
-								if avail[j] == val then
-								
-									cnt = cnt + 1
-									break
-								end
-																avail[j] = 0
-							end
-						end					end				end
+						-- see if our value is in the available
+						-- value list.
+						for j = 1,  a,  1 do
+							if avail[j] == val then
+								cnt = cnt + 1
+								break
+							end															avail[j] = 0
+						end
+					end				end			end
 
-				-- if the count is greater than zero, the
-				-- selected value could also be used in another
-				-- cell in that zone. we repeat the process with
-				-- the other two zones.
+			-- if the count is greater than zero, the
+			-- selected value could also be used in another
+			-- cell in that zone. we repeat the process with
+			-- the other two zones.
+			if cnt > 0 then
+				
+				-- col
+				cnt = 0					
+				for i = 1, 9, 1 do
+				
+					if i ~= row then
+
+						j = i * 9 + col							
+						if mask[j] == 0 then
+							a = this.getAvailable(mask, j, avail)								
+							for j = 1, a, 1 do
+							
+								if avail[j] == val then
+									cnt++
+									break
+								end									
+								avail[j] = 0
+							end
+						end					end				end
+				-- if the count is greater than zero,
+				-- the selected value could also be used
+				-- in another cell in that zone. we
+				-- repeat the process with the last
+				-- zone.
 				if cnt > 0 then
 				
-					-- col
-					cnt = 0					
-					for i = 1, 9, 1 do
-					
-						if i ~= row then
-
-							j = i * 9 + col							
-							if mask[j] == 0 then
-								a = this.getAvailable(mask, j, avail)
-								for(j = 0 j < a j++)
-								
-									if avail[j] == val then
-										cnt++
-										break
-									end									
-									avail[j] = 0
-								end
-							end						end					end
-
-					-- if the count is greater than zero,
-					-- the selected value could also be used
-					-- in another cell in that zone. we
-					-- repeat the process with the last
-					-- zone.
-					if(cnt > 0)
-					
-						-- square
-						cnt = 0
-						r = row - row % 3
-						c = col - col % 3
-						for(i = r i < r + 3 i++)
-						
-							for(j = c j < c + 3 j++)
-							
-								if((i == row) && (j == col))
-									continue
-	
+					-- square
+					cnt = 0
+					r = row - row % 3
+					c = col - col % 3						
+					for i = r, r + 3,  1 do
+						for j = c, c + 3,  1 do
+							if (i ~= row) and (j ~= col) then
 								k = i * 9 + j
-								if(mask[k] > 0)
-									continue
-								a = this.getAvailable(mask, k, avail)
-								for(k = 0 k < a k++)
-								
-									if(avail[k] == val)
-									
-										cnt++
-										break
+								if mask[k] == 0 then
+									a = this.getAvailable(mask, k, avail)										
+									for k = 1, a,  1 do
+										if avail[k] == val then
+											cnt = cnt + 1
+											break
+										end											
+										avail[k] = 0
 									end
-									avail[k] = 0
 								end
-							end
-						end
-
-						if(cnt > 0)
-						
-							mask[cell] = val
-							hints++
-						end
+							end						end					end			
+					if cnt > 0 then
+						mask[cell] = val
+						hints = hints + 1
 					end
 				end
 			end
-
-			tried[cell] = 1
-			n++
 		end
-		until n == 81
 
-		local t = this
-		setTimeout(function()t._doHints(matrix, mask, tried, hints)end, 50)
-	end
+		tried[cell] = 1
+		n = n + 1	
+	until n == 81
+		local t = this
+	setTimeout(function()t._doHints(matrix, mask, tried, hints)end, 50)
+end
 
 function Sudoku:newGame() 
-		local i
-		local hints = 0
-		local mask = Matrix.Create( 81 )
+	local i
+	local hints = 0	local cell
+	local mask = Matrix.Create( 81 )
 
-		-- clear out the game matrix.
-		this.matrix.clear()
+	-- clear out the game matrix.
+	this.matrix:clear()
 
-		-- call the solver on a completely empty matrix. this will
-		-- generate random values for cells resulting in a solved board.
-		this:solve( this.matrix )
+	-- call the solver on a completely empty matrix. this will
+	-- generate random values for cells resulting in a solved board.
+	this:solve( this.matrix )
 
-		-- generate hints for the solved board. if the level is easy,
-		-- use the easy mask function.
-		if this.level == 0 then
-			this.maskBoardEasy( this.matrix, mask )
+	-- generate hints for the solved board. if the level is easy,
+	-- use the easy mask function.
+	if this.level == 0 then
+		this.maskBoardEasy( this.matrix, mask )
 
-			-- save the solved matrix.
-			this.save = this.matrix
+		-- save the solved matrix.
+		this.save = this.matrix
 
-			-- set the masked matrix as the puzzle.
-			this.matrix = mask
+		-- set the masked matrix as the puzzle.
+		this.matrix = mask
 
-			timeDiff.start()
-			this:done()
+		timeDiff.start()
+		this:done()
+	else
+		-- the level is medium or greater. use the advanced mask
+		-- function to generate a minimal sudoku puzzle with a
+		-- single solution.
+		this:_doMask(this.matrix, mask)
 
-		else
-		
-			-- the level is medium or greater. use the advanced mask
-			-- function to generate a minimal sudoku puzzle with a
-			-- single solution.
-			this:_doMask(this.matrix, mask)
+		-- if the level is medium, randomly add 4 extra hints.
+		if this.level == 1 then
+			for i = 1, 4, 1 do
+				repeat
+					cell = Math.random( 81 )
+				until mask[cell] == 0 
 
-			-- if the level is medium, randomly add 4 extra hints.
-			if this.level == 1 then
-			
-				for i = 1, 4, 1 do
-				
-					repeat
-
-						local cell = Math.random( 81 )
-					until mask[cell] == 0 
-
-					mask[cell] = this.matrix[cell]
-				end
+				mask[cell] = this.matrix[cell]
 			end
 		end
 	end
+end
 
 -- this method solves the current game by restoring the solved matrix.
 -- if the original unmodified masked matrix was saved, this function
 -- could call the solve method which would undo any wrong player guesses
 -- and actually solve the game.
 function Sudoku:solveGame() 
-		this.matrix = this.save
-	end
+	this.matrix = this.save
+end
 
 -- this method determines wether or not the game has been completed. it
 -- looks at each cell and determines whether or not a value has been
@@ -1148,20 +1129,16 @@ function Sudoku:solveGame()
 -- it calls checkVal() to make sure the value does not violate the
 -- sudoku rules. if both checks are passed for each cell in the board
 -- the game is complete.
-function Sudoku:gameFinished()
-	
-		for i = 1, 9, 1 do
-
-			for j = 1, 9, 1 do
-
-				local val = this.matrix[i * 9 + j]
-				
-				if((val == 0) or (this._checkVal(this.matrix, i, j, val) == false)) then
-					return 0
-				end
+function Sudoku:gameFinished()
+	for i = 1, 9, 1 do
+		for j = 1, 9, 1 do
+			local val = this.matrix[i * 9 + j]
+			
+			if((val == 0) or (this._checkVal(this.matrix, i, j, val) == false)) then
+				return 0
 			end
 		end
-
-		return timeDiff.end()
 	end
-end
+
+	return timeDiff.end()
+end
