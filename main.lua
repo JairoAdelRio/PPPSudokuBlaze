@@ -6,12 +6,16 @@
 -- Managed with http://CoronaProjectManager.com
 --
 -- Copyright 2013 . All Rights Reserved.
--- 
-
-local sprite = require("sprite")
+-- 
 
-local physics = require("physics")
+local sq = require("sg")
+local sprite = require("sprite")
+local physics = require("physics")
 physics.start()
 
 
-display.setStatusBar(display.HiddenStatusBar)storyBoard = require "storyboard"storyBoard.gotoScene ( "MainMenu" )
+display.setStatusBar(display.HiddenStatusBar)
+
+storyBoard = require "storyboard"
+
+storyBoard.gotoScene ( "MainMenu" )
