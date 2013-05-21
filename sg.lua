@@ -318,8 +318,7 @@ function Sudoku:getAvailable( matrix, cell, avail )
 	local row
 	local col
 	local r
-	local c
-
+	local c
 	local arr = {}
 
 
@@ -701,7 +700,7 @@ function Sudoku:maskBoard(matrix, mask)
 
 										if avail[k] == val then
 
-											cnt++
+											cnt = cnt + 1
 											break
 										end
 										
@@ -715,16 +714,14 @@ function Sudoku:maskBoard(matrix, mask)
 					if cnt > 0 then
 					
 						mask[cell] = val
-						hints++
+						hints = hint + 1
 					end
 				end
 			end 
 		end 
 
 		tried[cell] = 1
-		n = n + 1
-	
-	
+		n = n + 1
 	until n == 81
 
 	-- at this point we should have a masked board with about 40 to
@@ -734,9 +731,8 @@ function Sudoku:maskBoard(matrix, mask)
 	-- try another.
 	repeat
 		repeat
-			cell = Math.random( 81 )
-
-		until ((mask[cell] ~= 0) || (tried[cell] ~= 0))
+			cell = Math.random( 81 )
+		until (mask[cell] ~= 0) or (tried[cell] ~= 0)
 
 		val = mask[cell]
 
@@ -751,9 +747,8 @@ function Sudoku:maskBoard(matrix, mask)
 		end
 			
 		tried[cell] = 0
-		hints--
-
-	until (hints = 0)
+		hints = hints -1 
+	until hints == 0 
 	-- at this point we have a board with about 20 to 25 hints and a
 	-- single solution.
 end
@@ -937,12 +932,10 @@ function Sudoku:_doHints(matrix, mask, tried, hints)
 		-- single solution.
 	end
 
-function Sudoku:_doMask(matrix, mask)
-	
+function Sudoku:_doMask(matrix, mask)
 		local i		local j		local k		local r		local c		local n = 0		local a		local hints = 0		local cell		local val
-		local avail = Matrix.Create(9)
-		local tried = Matrix.Create(81)
-
+		local avail = Matrix.Create(9)
+		local tried = Matrix.Create(81)
 		-- start with a cleared out board
 		mask.clear()
 
@@ -965,13 +958,13 @@ function Sudoku:_doMask(matrix, mask)
 		repeat
 		
 			-- choose a cell at random.
-			repeat
-				cell = Math.random( 81 )
-			until ((mask[cell] == 0) or (tried[cell] == 0))			
+			repeat
+				cell = Math.random( 81 )
+			until (mask[cell] == 0) or (tried[cell] == 0)			
 			val = matrix[cell]
 
 			-- see how many values can go in the cell.
-			i = this.getAvailable(mask, cell, nil)
+			i = this:getAvailable(mask, cell, nil)
 
 			if i > 1 then
 			
@@ -1086,7 +1079,7 @@ function Sudoku:_doMask(matrix, mask)
 			tried[cell] = 1
 			n++
 		end
-		while(n < 81)
+		until n == 81
 
 		local t = this
 		setTimeout(function()t._doHints(matrix, mask, tried, hints)end, 50)
