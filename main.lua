@@ -8,11 +8,10 @@
 -- Copyright 2013 . All Rights Reserved.
 -- 
 
-local sq = require("sg")
 local sprite = require("sprite")
-local physics = require("physics")
-physics.start()
+local physics = require("physics")
 
+physics.start()
 
 display.setStatusBar(display.HiddenStatusBar)
 

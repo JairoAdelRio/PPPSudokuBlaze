@@ -6,70 +6,75 @@
 -- Managed with http://CoronaProjectManager.com
 --
 -- Copyright 2013 . All Rights Reserved.
--- 
-
+-- local Matrix = require( "Matrix" )
+local sudoku = require("sg")
 local storyboard = require( "storyboard" )
 local scene = storyboard.newScene()
-
-
--- local forward references should go here --
-
 
+-- local forward references should go here --
+
 -- Called when the scene's view does not exist:
 function scene:createScene( event )
-        local group = self.view
-
+	local group = self.view	sudok = sudoku.Create( Matrix.Create(81) )	sudok:shuffle()
 end
 
 
 -- Called BEFORE scene has moved onscreen:
 function scene:willEnterScene( event )
-        local group = self.view
+	local group = self.view
+
+
 end
 
 
 -- Called immediately after scene has moved onscreen:
 function scene:enterScene( event )
-        local group = self.view
+	local group = self.view
+
 
 end
 
 
 -- Called when scene is about to move offscreen:
 function scene:exitScene( event )
-        local group = self.view
+	local group = self.view
+
 
 end
 
 
 -- Called AFTER scene has finished moving offscreen:
 function scene:didExitScene( event )
-        local group = self.view
+	local group = self.view
+
 end
 
 
 -- Called prior to the removal of scene's "view" (display group)
 function scene:destroyScene( event )
-        local group = self.view
+	local group = self.view
+
 
 end
 
 
 -- Called if/when overlay scene is displayed via storyboard.showOverlay()
 function scene:overlayBegan( event )
-        local group = self.view
-        local overlay_name = event.sceneName  -- name of the overlay scene
+	local group = self.view
+	local overlay_name = event.sceneName  -- name of the overlay scene
+
 
 end
 
 
 -- Called if/when overlay scene is hidden/removed via storyboard.hideOverlay()
 function scene:overlayEnded( event )
-        local group = self.view
-        local overlay_name = event.sceneName  -- name of the overlay scene
+	local group = self.view
+	local overlay_name = event.sceneName  -- name of the overlay scene
 
 end
-
+
+
 
 -- "createScene" event is dispatched if scene's view does not exist
 scene:addEventListener( "createScene", scene )

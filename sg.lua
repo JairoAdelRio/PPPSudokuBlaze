@@ -10,15 +10,15 @@
 * modification, are permitted provided that the following conditions are met: 
 * 
 *     * Redistributions of source code must retain the above copyright notice,
-*       this list of conditions and the following disclaimer.
+*       self list of conditions and the following disclaimer.
 *     * Redistributions in binary form must reproduce the above copyright
-*       notice, this list of conditions and the following disclaimer in the
+*       notice, self list of conditions and the following disclaimer in the
 *       documentation and/or other materials provided with the distribution.
 *     * Neither the name of Fourth Woods Media nor the names of its
 *       contributors may be used to endorse or promote products derived from
-*       this software without specific prior written permission.
+*       self software without specific prior written permission.
 * 
-* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+* self SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
 * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
@@ -27,11 +27,11 @@
 * SERVICES LOSS OF USE, DATA, OR PROFITS OR BUSINESS INTERRUPTION) HOWEVER
 * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-* OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+* OF self SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
-* This is a sudoku puzzle generator and solver. This program provides two
+* self is a sudoku puzzle generator and solver. self program provides two
 * generation algorithms, a solver and methods to update and check the state of
-* the puzzle. This program does not provide any user interface controls.
+* the puzzle. self program does not provide any user interface controls.
 *
 * To create a new puzzle just instantiate the Sudoku object:
 *
@@ -49,7 +49,7 @@
 *
 * thePuzzle.newGame()
 *
-* This class includes a solver that will solve the sudoku using a backtracking
+* self class includes a solver that will solve the sudoku using a backtracking
 * algorithm. To solve the puzzle call the solve() method:
 *
 * thePuzzle.solve()
@@ -70,16 +70,17 @@
 -- over a collection in javascript:
 -- http:--blogs.sun.com/greimer/entry/best_way_to_code_a
 --
--- This method takes one parameter:
+-- self method takes one parameter:
 -- 	obj - the object to search for in the array. the object must be of the
 -- 	      same type as the objects stored in the array.
 
-local matrix = require ("Matrix")
+local Matrix = require ("Matrix")
 
 -- The Sudoku class stores the matrix array and implements the game logic.
--- Instantiation of this class will automatically generate a new puzzle.
+-- Instantiation of self class will automatically generate a new puzzle.
 
 local Sudoku = {}
+Sudoku.__index = Sudoku
 
 function Sudoku.Create( matrix )
 
@@ -93,7 +94,7 @@ function Sudoku.Create( matrix )
 	sudoku.matrix = Matrix.Create( 81 )
 
 	-- initial puzzle is all zeros.
-	sudoku.matrix:clear()
+	sudoku.matrix:Clear()
 
 	-- stores the difficulty level of the puzzle 0 is easiest.
 	sudoku.level = 0
@@ -101,18 +102,18 @@ function Sudoku.Create( matrix )
 	return sudoku 
 end
 
---[[this method initializes the sudoku puzzle beginning with a root
+--[[self method initializes the sudoku puzzle beginning with a root
 	solution and randomly shuffling rows, columns and values. the result
-	of this method will be a completely solved sudoku board. the shuffle
+	of self method will be a completely solved sudoku board. the shuffle
 	is similar to that used by the sudoku puzzle at:
 	
 	http:--www.dhtmlgoodies.com/scripts/game_sudoku/game_sudoku.html
 
 
-	this method takes one parameter:
+	self method takes one parameter:
 	matrix - the 9x9 array to store the puzzle data. the array	
-	contents will be overwritten by this method.]]
-function Sudoku:shuffle( matrix ) 
+	contents will be overwritten by self method.]]
+function Sudoku:shuffle(  ) 
 	-- create the root sudoku solution. this produces the following
 	-- sudoku:
 	--
@@ -129,18 +130,21 @@ function Sudoku:shuffle( matrix )
 	-- 9 1 2 | 3 4 5 | 6 7 8
 	for i = 1, 9, 1 do			
 		for j = 1, 9, 1 do
-			matrix[i * 9 + j] = (i*3 + Math.floor(i/3) + j) % 9 + 1
-		end	end
+			self.matrix[i * 9 + j] = (i * 3 + math.floor( i / 3 ) + j ) % 9 + 1
+			print( string.format("Numbers %i , %i", i, j ))
+		end
+	end
 		
 	-- randomly shuffle the numbers in the root sudoku. pick two
 	-- numbers n1 and n2 at random. scan the board and for each
 	-- occurence of n1, replace it with n2 and vice-versa. repeat
 	-- several times. we pick 42 to make Douglas Adams happy.
 	for i = 1, 42, 1 do
-		local n1 = Math.random( 9 )
+		local n1 = math.random( 9 )
 		local n2
 		repeat
-			n2 = Math.random( 9 )
+			n2 = math.random( 9 )
+
 		until n1 ~= n2
 
 		for row = 1, 9, 1 do
@@ -153,6 +157,7 @@ function Sudoku:shuffle( matrix )
 			end
 		end
 	end
+	
 	-- randomly swap corresponding columns from each column of
 	-- subsquares
 	--
@@ -174,13 +179,13 @@ function Sudoku:shuffle( matrix )
 	-- note that we cannot swap corresponding rows from each row of
 	-- subsquares.
 	for c = 1, 42, 1 do 
-		local s1 = Math.random( 3 )
-		local s2 = Math.random( 3 )
+		local s1 = math.random( 3 )
+		local s2 = math.random( 3 )
 
 		for row = 1, 9, 1 do
-			local tmp = this.matrix[row * 9 + (s1 * 3 + c % 3)]
-			this.matrix[row * 9 + (s1 * 3 + c % 3)] = this.matrix[row * 9 + (s2 * 3 + c % 3)]
-			this.matrix[row * 9 + (s2 * 3 + c % 3)] = tmp
+			local tmp = self.matrix[row * 9 + (s1 * 3 + c % 3)]
+			self.matrix[row * 9 + (s1 * 3 + c % 3)] = self.matrix[row * 9 + (s2 * 3 + c % 3)]
+			self.matrix[row * 9 + (s2 * 3 + c % 3)] = tmp
 		end
 	end
 
@@ -201,13 +206,13 @@ function Sudoku:shuffle( matrix )
 	-- . . . | . . . | . . .
 	-- . . . | . . . | . . .
 	for s = 1, 42, 1 do
-		local c1 = Math.random(3)
-		local c2 = Math.random(3)
+		local c1 = math.random(3)
+		local c2 = math.random(3)
 
 		for row = 1, 9, 1 do
-			local tmp = this.matrix[row * 9 + (s % 3 * 3 + c1)]
-			this.matrix[row * 9 + (s % 3 * 3 + c1)] = this.matrix[row * 9 + (s % 3 * 3 + c2)]
-			this.matrix[row * 9 + (s % 3 * 3 + c2)] = tmp
+			local tmp = self.matrix[row * 9 + (s % 3 * 3 + c1)]
+			self.matrix[row * 9 + (s % 3 * 3 + c1)] = self.matrix[row * 9 + (s % 3 * 3 + c2)]
+			self.matrix[row * 9 + (s % 3 * 3 + c2)] = tmp
 		end
 	end
 
@@ -225,13 +230,13 @@ function Sudoku:shuffle( matrix )
 	-- . . . | . . . | . . .
 	-- . . . | . . . | . . .
 	for s = 1, 42, 1 do
-		local r1 = Math.random( 3)
-		local r2 = Math.random( 3)
+		local r1 = math.random( 3)
+		local r2 = math.random( 3)
 
 		for col = 1, 9, 1 do
-			local tmp = this.matrix[(s % 3 * 3 + r1) * 9 + col]
-			this.matrix[(s % 3 * 3 + r1) * 9 + col] = this.matrix[(s % 3 * 3 + r2) * 9 + col]
-			this.matrix[(s % 3 * 3 + r2) * 9 + col] = tmp
+			local tmp = self.matrix[(s % 3 * 3 + r1) * 9 + col]
+			self.matrix[(s % 3 * 3 + r1) * 9 + col] = self.matrix[(s % 3 * 3 + r2) * 9 + col]
+			self.matrix[(s % 3 * 3 + r2) * 9 + col] = tmp
 		end
 	end
 
@@ -256,16 +261,16 @@ function Sudoku:shuffle( matrix )
 	-- mirror left to right and/or top to bottom.
 end
 
-	-- this method randomly masks values in a solved sudoku board. for the
+	-- self method randomly masks values in a solved sudoku board. for the
 	-- easiest level it will hide 5 cells from each 3x3 subsquare.
 	--
-	-- this method makes no attempt to ensure a unique solution and simply
+	-- self method makes no attempt to ensure a unique solution and simply
 	-- (naively) just masks random values. usually there will be only one
 	-- solution however, there may be two or more. i've seen boards with as
-	-- many as 6 or 7 solutions using this function, though that is pretty
+	-- many as 6 or 7 solutions using self function, though that is pretty
 	-- rare.
 	--
-	-- this method takes two parameters:
+	-- self method takes two parameters:
 	-- 	matrix - the game array completely initialized with the game
 	-- 		 data.
 	-- 	mask - an array to store the 9x9 mask data. the mask array will
@@ -287,30 +292,30 @@ function Sudoku:maskBoardEasy (matrix, mask)
 				local c
 				
 				repeat
-					c = Math.random( 9)
-				until mask[(i * 3 + Math.floor(c / 3)) * 9 + j * 3 + c % 3] == 0
+					c = math.random( 9)
+				until mask[(i * 3 + math.floor(c / 3)) * 9 + j * 3 + c % 3] == 0
 		
-				mask[(i * 3 + Math.floor(c / 3)) * 9 + j * 3 + c % 3] = 0
+				mask[(i * 3 + math.floor(c / 3)) * 9 + j * 3 + c % 3] = 0
 			end
 		end
 	end
 
 end
 
---[[this method scans all three zones that contains the specified cell
+--[[self method scans all three zones that contains the specified cell
 -- and populates an array with values that have not already been used in
 -- one of the zones. the order of the values in the array are randomized
 -- so the solver may simply iterate linearly through the array to try
 -- the values in a random order rather than sequentially.
 --
--- this method takes three parameters:
+-- self method takes three parameters:
 -- 	matrix - the array containing the current state of the puzzle.
 -- 	cell - the cell for which to retrieve available values.
--- 	avail - the array to receive the available values. if this
--- 		parameter is nil, this method simply counts the number
+-- 	avail - the array to receive the available values. if self
+-- 		parameter is nil, self method simply counts the number
 -- 		of available values without returning them.
 --
--- this method returns the length of the data in the available array.]]
+-- self method returns the length of the data in the available array.]]
 function Sudoku:getAvailable( matrix, cell, avail )
 	local i
 	local j
@@ -322,7 +327,7 @@ function Sudoku:getAvailable( matrix, cell, avail )
 	local arr = {}
 
 
-	row = Math.floor(cell / 9)
+	row = math.floor(cell / 9)
 	col = cell % 9
 
 	-- row
@@ -330,8 +335,8 @@ function Sudoku:getAvailable( matrix, cell, avail )
 
 		j = row * 9 + i
 			
-		if(this.matrix[j] > 0) then
-			arr[this.matrix[j] - 1] = 1
+		if(self.matrix[j] > 0) then
+			arr[self.matrix[j] - 1] = 1
 		end
 	end
 
@@ -342,7 +347,7 @@ function Sudoku:getAvailable( matrix, cell, avail )
 		
 		if(matrix[j] > 0) then
 
-			arr[this.matrix[j] - 1] = 1
+			arr[self.matrix[j] - 1] = 1
 		end
 	end
 
@@ -385,8 +390,8 @@ function Sudoku:getAvailable( matrix, cell, avail )
 		
 	for i = 1, 18, 1 do
 
-		r = Math.random( j )
-		c = Math.random( j )
+		r = math.random( j )
+		c = math.random( j )
 		row = avail[r]
 		avail[r] = avail[c]
 		avail[c] = row
@@ -395,14 +400,14 @@ function Sudoku:getAvailable( matrix, cell, avail )
 	return j
 end
 
---[[ this method is used by the solver to find the next cell to be filled.
+--[[ self method is used by the solver to find the next cell to be filled.
 -- the cell is chosen by finding a cell with the least amount of
 -- available values to try.
 --
--- this method takes one parameter:
+-- self method takes one parameter:
 -- 	matrix - the array containing the current state of the puzzle.
 --
--- this method returns the next cell, or -1 if there are no cells left
+-- self method returns the next cell, or -1 if there are no cells left
 -- to choose.]]
 function Sudoku:getCell (matrix)
 
@@ -415,7 +420,7 @@ function Sudoku:getCell (matrix)
 	for i = 1, 81, 1 do
 
 		if matrix[i] == 0 then
-			j = this:getAvailable( matrix, i, nil )
+			j = self:getAvailable( matrix, i, nil )
 
 			if j < n then
 				n = j
@@ -431,31 +436,31 @@ function Sudoku:getCell (matrix)
 	return cell
 end
 
---[[this is the actual solver. it implements a backtracking algorithm in
+--[[self is the actual solver. it implements a backtracking algorithm in
 -- which it randomly selects numbers to try in each cell. it starts
 -- with the first cell and picks a random number. if the number works in
 -- the cell, it recursively chooses the next cell and starts again. if
 -- all the numbers for a cell have been tried and none work, a number
 -- chosen for a previous cell cannot be part of the solution so we have
 -- to back up to the last cell and choose another number. if all the
--- numbers for that cell have also been tried, we back up again. this
+-- numbers for that cell have also been tried, we back up again. self
 -- continues until a value is chosen for all 81 cells.
 --
--- this method takes one parameter:
+-- self method takes one parameter:
 -- 	matrix - the array containing the current state of the puzzle.
 --
--- this method returns 1 if a solution has been found or 0 if there was
+-- self method returns 1 if a solution has been found or 0 if there was
 -- not a solution.]]
 function Sudoku:solve(matrix)
 
 	local i
 	local j
 	local ret = 0
-	local cell = this:getCell(matrix)
+	local cell = self:getCell(matrix)
 
-	-- since this is the solver that is following the sudoku rules,
+	-- since self is the solver that is following the sudoku rules,
 	-- if getCell returns -1 we are guaranteed to have found a valid
-	-- solution. in this case we just return 1 (for 1 solution, see
+	-- solution. in self case we just return 1 (for 1 solution, see
 	-- enumSolutions for more information).
 	if cell == -1 then
 		return 1
@@ -464,14 +469,14 @@ function Sudoku:solve(matrix)
 	local avail = Matrix.Create(9)
 
 
-	j = this:getAvailable( matrix, cell, avail )
+	j = self:getAvailable( matrix, cell, avail )
 		
 	for i = 1, j, 1 do
 
 		matrix[cell] = avail[i]
 
 		-- if we found a solution, return 1 to the caller.
-		if this:solve(matrix) == 1 then
+		if self:solve(matrix) == 1 then
 			return 1
 		end
 			
@@ -487,32 +492,32 @@ function Sudoku:solve(matrix)
 	return 0
 end
 
---[[this method counts the number of possible solutions for a given
--- puzzle. this uses the same algorithm as the solver but tries all
+--[[self method counts the number of possible solutions for a given
+-- puzzle. self uses the same algorithm as the solver but tries all
 -- the available values for all the cells incrementing a count every
--- time a new solution is found. this method is used by the mask
+-- time a new solution is found. self method is used by the mask
 -- function to ensure there is only one solution to the puzzle.
 --
--- this method performs well for a puzzle with 20 or so hints. do not
--- try this function on a blank puzzle (zero hints). there is not enough
+-- self method performs well for a puzzle with 20 or so hints. do not
+-- try self function on a blank puzzle (zero hints). there is not enough
 -- time remaining in the physical universe to enumerate all the possible
--- sudoku boards. when this method returns, the puzzle passed in is
+-- sudoku boards. when self method returns, the puzzle passed in is
 -- restored to its original state.
 --
--- this method takes one parameter:
+-- self method takes one parameter:
 -- 	matrix - the array containing the current state of the puzzle.
 --
--- this method returns the number of solutions found or 0 if there was
+-- self method returns the number of solutions found or 0 if there was
 -- not a solution.]]
 function Sudoku:enumSolutions(matrix)
 
 	local i
 	local j
 	local ret = 0
-	local cell = this:getCell(matrix)
+	local cell = self:getCell(matrix)
 
 	-- if getCell returns -1 the board is completely filled which
-	-- means we found a solution. return 1 for this solution.
+	-- means we found a solution. return 1 for self solution.
 	if cell == -1 then
 		return 1
 	end
@@ -520,15 +525,15 @@ function Sudoku:enumSolutions(matrix)
 	local avail = Matrix.Create(9)
 
 
-	j = this:getAvailable(matrix, cell, avail)
+	j = self:getAvailable(matrix, cell, avail)
 		
 	for i = 1,  j, 1 do
 	
 		-- we try each available value in the array and count
 		-- how many solutions are produced.
-		this.matrix[cell] = avail[i]
+		self.matrix[cell] = avail[i]
 
-		ret = ret + this.enumSolutions(matrix)
+		ret = ret + self.enumSolutions(matrix)
 
 		-- for the purposes of the mask function, if we found
 		-- more than one solution, we can quit searching now
@@ -538,18 +543,18 @@ function Sudoku:enumSolutions(matrix)
 		end
 	end
 	
-	this.matrix[cell] = 0
+	self.matrix[cell] = 0
 	
 	return ret
 end
 
---[[this method generates a minimal sudoku puzzle. minimal means that no
+--[[self method generates a minimal sudoku puzzle. minimal means that no
 -- remaining hints on the board may be removed and still generate a
--- unique solution. when this method returns the resulting puzzle will
+-- unique solution. when self method returns the resulting puzzle will
 -- contain about 20 to 25 hints that describe a puzzle with only one
 -- solution.
 --
--- this method takes two parameters:
+-- self method takes two parameters:
 -- 	matrix - the game array completely initialized with the game
 -- 		 data.
 -- 	mask - an array to store the 9x9 mask data. the mask array will
@@ -584,7 +589,7 @@ function Sudoku:maskBoard(matrix, mask)
 	-- cell value and at least one other value), check rule two.
 	-- 2. for each zone, if the selected value could go in another
 	-- free cell in the zone then the cell may be selected as a
-	-- hint. this rule must be satisfied by all three zones.
+	-- hint. self rule must be satisfied by all three zones.
 	--
 	-- both rules must pass for a cell to be selected. once all 81
 	-- cells have been checked, the masked board will represent a
@@ -592,13 +597,13 @@ function Sudoku:maskBoard(matrix, mask)
 	repeat
 		-- choose a cell at random.
 		repeat
-			cell = Math.random( 81 ) 
+			cell = math.random( 81 ) 
 		until (mask[cell] == 0) or (tried[cell] == 0) 
 			
 		val = matrix[cell]
 
 		-- see how many values can go in the cell.
-		i = this:getAvailable( mask, cell, nil )
+		i = self:getAvailable( mask, cell, nil )
 
 		if i > 1 then
 		
@@ -609,7 +614,7 @@ function Sudoku:maskBoard(matrix, mask)
 			-- value can also be used in at least one other
 			-- cell in the zone.
 			local cnt
-			local row = Math.floor(cell / 9)
+			local row = math.floor(cell / 9)
 			local col = cell % 9
 
 			cnt = 0 -- count the cells in which the value may be used.
@@ -629,7 +634,7 @@ function Sudoku:maskBoard(matrix, mask)
 					if mask[j] == 0 then
 						-- get the values that can be used in
 						-- the cell.
-						a = this:getAvailable( mask, j, avail )
+						a = self:getAvailable( mask, j, avail )
 	
 						-- see if our value is in the available
 						-- value list.
@@ -659,7 +664,7 @@ function Sudoku:maskBoard(matrix, mask)
 						j = i * 9 + col
 							
 						if mask[j] == 0 then
-							a = this:getAvailable( mask, j, avail )
+							a = self:getAvailable( mask, j, avail )
 								
 							for j = 1, a, 1 do
 								if avail[j] == val  then
@@ -695,7 +700,7 @@ function Sudoku:maskBoard(matrix, mask)
 								
 								if mask[k] == 0 then
 
-									a = this.getAvailable(mask, k, avail)
+									a = self.getAvailable(mask, k, avail)
 									
 									for k = 1, a, 1 do
 
@@ -726,24 +731,24 @@ function Sudoku:maskBoard(matrix, mask)
 
 	until n == 81
 
-	-- at this point we should have a masked board with about 40 to
+	-- at self point we should have a masked board with about 40 to
 	-- 50 hints. randomly select hints and remove them. for each
 	-- removed hint, see if there is still a single solution. if so,
 	-- select another hint and repeat. if not, replace the hint and
 	-- try another.
 	repeat
 		repeat
-			cell = Math.random( 81 )
+			cell = math.random( 81 )
 
 		until (mask[cell] ~= 0) or (tried[cell] ~= 0)
 
 		val = mask[cell]
 
-		local t = this
+		local t = self
 		local solutions = 0
 
 		mask[cell] = 0
-		solutions = this:enumSolutions(mask)
+		solutions = self:enumSolutions(mask)
 
 		if solutions > 1 then
 			mask[cell] = val
@@ -754,20 +759,20 @@ function Sudoku:maskBoard(matrix, mask)
 
 	until hints == 0 
 
-	-- at this point we have a board with about 20 to 25 hints and a
+	-- at self point we have a board with about 20 to 25 hints and a
 	-- single solution.
 end
 
 
---[[this method checks whether a value will work in a given cell. it
+--[[self method checks whether a value will work in a given cell. it
 -- checks each zone to ensure the value is not already used.
 --
--- this method takes three parameters:
+-- self method takes three parameters:
 -- 	row - the row of the cell
 -- 	col - the column of the cell
 -- 	val - the value to try in the cell
 --
--- this method returns true if the value can be used in the cell, false
+-- self method returns true if the value can be used in the cell, false
 -- otherwise.]]
 function Sudoku:_checkVal(matrix, row, col, val) 
 		local i
@@ -810,46 +815,46 @@ function Sudoku:_checkVal(matrix, row, col, val)
 
 	-- 'public' methods
 
---[[this method checks whether a value will work in a given cell. it
+--[[self method checks whether a value will work in a given cell. it
 -- checks each zone to ensure the value is not already used.
 --
--- this method takes three parameters:
+-- self method takes three parameters:
 -- 	row - the row of the cell
 -- 	col - the column of the cell
 -- 	val - the value to try in the cell
 --
--- this method returns true if the value can be used in the cell, false
+-- self method returns true if the value can be used in the cell, false
 -- otherwise.]]
 function Sudoku:checkVal(row, col, val)
 
-	return this._checkVal(this.matrix, row, col, val)
+	return self._checkVal(self.matrix, row, col, val)
 end
 
---[[ this method sets the value for a particular cell. this is called by
+--[[ self method sets the value for a particular cell. self is called by
 -- the user interface when the user enters a value.
 --
--- this method takes three parameters:
+-- self method takes three parameters:
 -- 	row - the row of the cell
 -- 	col - the column of the cell
 -- 	val - the value to enter in the cell]]
 function Sudoku:setVal(row, col, val)
-	this.matrix[row * 9 + col] = val
+	self.matrix[row * 9 + col] = val
 end
 
---[[this method gets the value for a particular cell. this is called by
+--[[self method gets the value for a particular cell. self is called by
 -- the user interface for displaying the contents of a cell.
 --
--- this method takes two parameters:
+-- self method takes two parameters:
 -- 	row - the row of the cell
 -- 	col - the column of the cell
 --
--- this method returns the value of the cell at the specified location.]]
+-- self method returns the value of the cell at the specified location.]]
 function Sudoku:getVal(row, col)
 
-	return this.matrix[row * 9 + col]
+	return self.matrix[row * 9 + col]
 end
 
-	-- this method initializes a new game using the solver to generate the
+	-- self method initializes a new game using the solver to generate the
 	-- board.
 function Sudoku:_newGame() 
 		local i
@@ -857,53 +862,53 @@ function Sudoku:_newGame()
 		local mask = Matrix.Create(81)
 
 		-- clear out the game matrix.
-		this.matrix:clear()
+		self.matrix:clear()
 
-		-- call the solver on a completely empty matrix. this will
+		-- call the solver on a completely empty matrix. self will
 		-- generate random values for cells resulting in a solved board.
-		this:solve(this.matrix)
+		self:solve(self.matrix)
 
 		-- generate hints for the solved board. if the level is easy,
 		-- use the easy mask function.
-		if this.level == 0
+		if self.level == 0
  then
-			this:maskBoardEasy(this.matrix, mask)
+			self:maskBoardEasy(self.matrix, mask)
 
 		else
 		
 			-- the level is medium or greater. use the advanced mask
 			-- function to generate a minimal sudoku puzzle with a
 			-- single solution.
-			this.maskBoard(this.matrix, mask)
+			self.maskBoard(self.matrix, mask)
 
 			-- if the level is medium, randomly add 4 extra hints.
-			if ( this.level == 1) then
+			if ( self.level == 1) then
 			
 				for i = 1, 4, 1 do
 
 					repeat				
-						local cell = Math.random( 81 )
+						local cell = math.random( 81 )
 					until mask[cell] == 0
 
-					mask[cell] = this.matrix[cell]
+					mask[cell] = self.matrix[cell]
 				end
 			end
 		end
 
 		-- save the solved matrix.
-		this.save = this.matrix
+		self.save = self.matrix
 
 		-- set the masked matrix as the puzzle.
-		this.matrix = mask
+		self.matrix = mask
 
 		timeDiff.start()
 	end
 
-	--this.done
+	--self.done
 
 function Sudoku:_doHints(matrix, mask, tried, hints)
 	
-		-- at this point we should have a masked board with about 40 to
+		-- at self point we should have a masked board with about 40 to
 		-- 50 hints. randomly select hints and remove them. for each
 		-- removed hint, see if there is still a single solution. if so,
 		-- select another hint and repeat. if not, replace the hint and
@@ -912,16 +917,16 @@ function Sudoku:_doHints(matrix, mask, tried, hints)
 
 			repeat
 
-				cell = Math.random( 81 )
+				cell = math.random( 81 )
 			until((mask[cell] ~= 0) or (tried[cell] ~= 0))
 
 			val = mask[cell]
 
-			local t = this
+			local t = self
 			local solutions = 0
 
 			mask[cell] = 0
-			solutions = this.enumSolutions(mask)
+			solutions = self.enumSolutions(mask)
 			--console.log("timeout")
 
 			if solutions > 1 then
@@ -930,18 +935,18 @@ function Sudoku:_doHints(matrix, mask, tried, hints)
 		
 			tried[cell] = 0
 			hints = hint - 1
-			--local t = this
+			--local t = self
 			--setTimeout(function()t._doHints(matrix, mask, tried, hints)end, 50)
 		else
 
-			this.save = this.matrix
-			this.matrix = mask
-			this:done()
+			self.save = self.matrix
+			self.matrix = mask
+			self:done()
 		end
 
 		--console.log(hints)
 
-		-- at this point we have a board with about 20 to 25 hints and a
+		-- at self point we have a board with about 20 to 25 hints and a
 		-- single solution.
 	end
 
@@ -975,21 +980,22 @@ function Sudoku:_doMask(matrix, mask)
 	-- cell value and at least one other value), check rule two.
 	-- 2. for each zone, if the selected value could go in another
 	-- free cell in the zone then the cell may be selected as a
-	-- hint. this rule must be satisfied by all three zones.
+	-- hint. self rule must be satisfied by all three zones.
 	--
 	-- both rules must pass for a cell to be selected. once all 81
 	-- cells have been checked, the masked board will represent a
 	-- puzzle with a single solution.
-	repeat
+	repeat
+
 		-- choose a cell at random.
 		repeat
-			cell = Math.random( 81 )
+			cell = math.random( 81 )
 		until (mask[cell] == 0) or (tried[cell] == 0)
 			
 		val = matrix[cell]
 
 		-- see how many values can go in the cell.
-		i = this:getAvailable(mask, cell, nil)
+		i = self:getAvailable(mask, cell, nil)
 
 		if i > 1 then
 		
@@ -1000,11 +1006,14 @@ function Sudoku:_doMask(matrix, mask)
 			-- value can also be used in at least one other
 			-- cell in the zone.
 			local cnt
-			local row = Math.floor(cell / 9)
+			local row = math.floor(cell / 9)
 			local col = cell % 9
-			-- count the cells in which the value may be used.
-			cnt = 0 
-			-- look at each cell in the same row as the
+
+			-- count the cells in which the value may be used.
+
+			cnt = 0 
+
+			-- look at each cell in the same row as the
 			-- selected cell.
 			for i = 1, 9, 1 do
 				
@@ -1020,7 +1029,7 @@ function Sudoku:_doMask(matrix, mask)
 
 						-- get the values that can be used in
 						-- the cell.
-						a = this.getAvailable( mask, j, avail )
+						a = self.getAvailable( mask, j, avail )
 	
 						-- see if our value is in the available
 						-- value list.
@@ -1031,7 +1040,8 @@ function Sudoku:_doMask(matrix, mask)
 								cnt = cnt + 1
 								break
 							end
-														avail[j] = 0
+							
+							avail[j] = 0
 						end
 					end
 				end
@@ -1046,14 +1056,18 @@ function Sudoku:_doMask(matrix, mask)
 				-- col
 				cnt = 0
 					
-				for i = 1, 9, 1 do
-					if i ~= row then
+				for i = 1, 9, 1 do
+
+					if i ~= row then
+
 						j = i * 9 + col
 				
-						if mask[j] == 0 then
-							a = this.getAvailable(mask, j, avail)
+						if mask[j] == 0 then
+
+							a = self.getAvailable(mask, j, avail)
 								
-							for j = 1, a, 1 do
+							for j = 1, a, 1 do
+
 								if avail[j] == val then
 
 									cnt = cnt + 1
@@ -1085,7 +1099,7 @@ function Sudoku:_doMask(matrix, mask)
 								k = i * 9 + j
 
 								if mask[k] == 0 then
-									a = this.getAvailable(mask, k, avail)
+									a = self.getAvailable(mask, k, avail)
 										
 									for k = 1, a,  1 do
 										if avail[k] == val then
@@ -1115,7 +1129,7 @@ function Sudoku:_doMask(matrix, mask)
 	
 	until n == 81
 	
-	local t = this
+	local t = self
 	setTimeout(function()t._doHints(matrix, mask, tried, hints)end, 50)
 end
 
@@ -1126,54 +1140,54 @@ function Sudoku:newGame()
 	local mask = Matrix.Create( 81 )
 
 	-- clear out the game matrix.
-	this.matrix:clear()
+	self.matrix:clear()
 
-	-- call the solver on a completely empty matrix. this will
+	-- call the solver on a completely empty matrix. self will
 	-- generate random values for cells resulting in a solved board.
-	this:solve( this.matrix )
+	self:solve( self.matrix )
 
 	-- generate hints for the solved board. if the level is easy,
 	-- use the easy mask function.
-	if this.level == 0 then
-		this.maskBoardEasy( this.matrix, mask )
+	if self.level == 0 then
+		self.maskBoardEasy( self.matrix, mask )
 
 		-- save the solved matrix.
-		this.save = this.matrix
+		self.save = self.matrix
 
 		-- set the masked matrix as the puzzle.
-		this.matrix = mask
+		self.matrix = mask
 
 		timeDiff.start()
-		this:done()
+		self:done()
 	else
 		-- the level is medium or greater. use the advanced mask
 		-- function to generate a minimal sudoku puzzle with a
 		-- single solution.
-		this:_doMask(this.matrix, mask)
+		self:_doMask(self.matrix, mask)
 
 		-- if the level is medium, randomly add 4 extra hints.
-		if this.level == 1 then
+		if self.level == 1 then
 			for i = 1, 4, 1 do
 
 				repeat
-					cell = Math.random( 81 )
+					cell = math.random( 81 )
 				until mask[cell] == 0 
 
-				mask[cell] = this.matrix[cell]
+				mask[cell] = self.matrix[cell]
 			end
 		end
 	end
 end
 
--- this method solves the current game by restoring the solved matrix.
--- if the original unmodified masked matrix was saved, this function
+-- self method solves the current game by restoring the solved matrix.
+-- if the original unmodified masked matrix was saved, self function
 -- could call the solve method which would undo any wrong player guesses
 -- and actually solve the game.
 function Sudoku:solveGame() 
-	this.matrix = this.save
+	self.matrix = self.save
 end
 
--- this method determines wether or not the game has been completed. it
+-- self method determines wether or not the game has been completed. it
 -- looks at each cell and determines whether or not a value has been
 -- entered. if not, the game is not done. if a value has been entered,
 -- it calls checkVal() to make sure the value does not violate the
@@ -1185,9 +1199,9 @@ function Sudoku:gameFinished()
 
 		for j = 1, 9, 1 do
 
-			local val = this.matrix[i * 9 + j]
+			local val = self.matrix[i * 9 + j]
 			
-			if((val == 0) or (this:_checkVal(this.matrix, i, j, val) == false)) then
+			if((val == 0) or (self:_checkVal(self.matrix, i, j, val) == false)) then
 				return 0
 			end
 		end
@@ -1195,3 +1209,5 @@ function Sudoku:gameFinished()
 
 	return nil --timeDiff.end()
 end
+
+return Sudoku
