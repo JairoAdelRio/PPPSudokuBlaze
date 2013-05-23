@@ -92,7 +92,7 @@ function Sudoku.Create( matrix )
 	-- stores the 9x9 game data. the puzzle data is stored with revealed
 	-- numbers as 1-9 and hidden numbers for the user to discover as zeros.
 	sudoku.matrix = Matrix.Create( 81 )
-
+	sudoku.mask = Matrix.Create( 81 )	
 	-- initial puzzle is all zeros.
 	sudoku.matrix:Clear()
 
@@ -344,7 +344,7 @@ function Sudoku:maskBoardEasy (matrix, mask)
 
 end
 
---[[self method scans all three zones that contains the specified cell
+--[[this method scans all three zones that contains the specified cell
 -- and populates an array with values that have not already been used in
 -- one of the zones. the order of the values in the array are randomized
 -- so the solver may simply iterate linearly through the array to try
@@ -478,7 +478,7 @@ function Sudoku:getCell (matrix)
 	return cell
 end
 
---[[self is the actual solver. it implements a backtracking algorithm in
+--[[this is the actual solver. it implements a backtracking algorithm in
 -- which it randomly selects numbers to try in each cell. it starts
 -- with the first cell and picks a random number. if the number works in
 -- the cell, it recursively chooses the next cell and starts again. if
@@ -590,7 +590,7 @@ function Sudoku:enumSolutions(matrix)
 	return ret
 end
 
---[[self method generates a minimal sudoku puzzle. minimal means that no
+--[[this method generates a minimal sudoku puzzle. minimal means that no
 -- remaining hints on the board may be removed and still generate a
 -- unique solution. when self method returns the resulting puzzle will
 -- contain about 20 to 25 hints that describe a puzzle with only one
@@ -601,7 +601,7 @@ end
 -- 		 data.
 -- 	mask - an array to store the 9x9 mask data. the mask array will
 -- 	       contain the board that will be presented to the user. ]]
-function Sudoku:maskBoard(matrix, mask)
+function Sudoku:maskBoard()
 
 	local i
 	local j
@@ -618,7 +618,7 @@ function Sudoku:maskBoard(matrix, mask)
 
 
 	-- start with a cleared out board
-	mask:clear()
+	self.mask:Clear()
 
 	-- randomly add values from the solved board to the masked
 	-- board, picking only cells that cannot be deduced by existing
@@ -640,12 +640,12 @@ function Sudoku:maskBoard(matrix, mask)
 		-- choose a cell at random.
 		repeat
 			cell = math.random( 81 ) 
-		until (mask[cell] == 0) or (tried[cell] == 0) 
+		until (self.mask[cell] == 0) or (tried[cell] == 0) 
 			
-		val = matrix[cell]
+		val = self.matrix[cell]
 
 		-- see how many values can go in the cell.
-		i = self:getAvailable( mask, cell, nil )
+		i = self:getAvailable( self.mask, cell, nil )
 
 		if i > 1 then
 		
@@ -673,10 +673,10 @@ function Sudoku:maskBoard(matrix, mask)
 
 					-- if the value is already filled, skip
 					-- to the next.
-					if mask[j] == 0 then
+					if self.mask[j] == 0 then
 						-- get the values that can be used in
 						-- the cell.
-						a = self:getAvailable( mask, j, avail )
+						a = self:getAvailable( self.mask, j, avail )
 	
 						-- see if our value is in the available
 						-- value list.
@@ -705,8 +705,8 @@ function Sudoku:maskBoard(matrix, mask)
 					if i ~= row then
 						j = i * 9 + col
 							
-						if mask[j] == 0 then
-							a = self:getAvailable( mask, j, avail )
+						if self.mask[j] == 0 then
+							a = self:getAvailable( self.mask, j, avail )
 								
 							for j = 1, a, 1 do
 								if avail[j] == val  then
@@ -740,9 +740,9 @@ function Sudoku:maskBoard(matrix, mask)
 
 								k = i * 9 + j
 								
-								if mask[k] == 0 then
+								if self.mask[k] == 0 then
 
-									a = self.getAvailable(mask, k, avail)
+									a = self.getAvailable(self.mask, k, avail)
 									
 									for k = 1, a, 1 do
 
@@ -761,7 +761,7 @@ function Sudoku:maskBoard(matrix, mask)
 					
 					if cnt > 0 then
 					
-						mask[cell] = val
+						self.mask[cell] = val
 						hints = hint + 1
 					end
 				end
@@ -782,18 +782,18 @@ function Sudoku:maskBoard(matrix, mask)
 		repeat
 			cell = math.random( 81 )
 
-		until (mask[cell] ~= 0) or (tried[cell] ~= 0)
+		until (self.mask[cell] ~= 0) or (tried[cell] ~= 0)
 
-		val = mask[cell]
+		val = self.mask[cell]
 
 		local t = self
 		local solutions = 0
 
-		mask[cell] = 0
+		self.mask[cell] = 0
 		solutions = self:enumSolutions(mask)
 
 		if solutions > 1 then
-			mask[cell] = val
+			self.mask[cell] = val
 		end
 			
 		tried[cell] = 0
