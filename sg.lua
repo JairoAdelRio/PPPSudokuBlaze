@@ -10,15 +10,15 @@
 * modification, are permitted provided that the following conditions are met: 
 * 
 *     * Redistributions of source code must retain the above copyright notice,
-*       self list of conditions and the following disclaimer.
+*       this list of conditions and the following disclaimer.
 *     * Redistributions in binary form must reproduce the above copyright
-*       notice, self list of conditions and the following disclaimer in the
+*       notice, this list of conditions and the following disclaimer in the
 *       documentation and/or other materials provided with the distribution.
 *     * Neither the name of Fourth Woods Media nor the names of its
 *       contributors may be used to endorse or promote products derived from
-*       self software without specific prior written permission.
+*       this software without specific prior written permission.
 * 
-* self SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
 * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
@@ -27,11 +27,11 @@
 * SERVICES LOSS OF USE, DATA, OR PROFITS OR BUSINESS INTERRUPTION) HOWEVER
 * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-* OF self SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+* OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
-* self is a sudoku puzzle generator and solver. self program provides two
+* This is a sudoku puzzle generator and solver. This program provides two
 * generation algorithms, a solver and methods to update and check the state of
-* the puzzle. self program does not provide any user interface controls.
+* the puzzle. This program does not provide any user interface controls.
 *
 * To create a new puzzle just instantiate the Sudoku object:
 *
@@ -49,7 +49,7 @@
 *
 * thePuzzle.newGame()
 *
-* self class includes a solver that will solve the sudoku using a backtracking
+* This class includes a solver that will solve the sudoku using a backtracking
 * algorithm. To solve the puzzle call the solve() method:
 *
 * thePuzzle.solve()
@@ -70,14 +70,14 @@
 -- over a collection in javascript:
 -- http:--blogs.sun.com/greimer/entry/best_way_to_code_a
 --
--- self method takes one parameter:
+-- This method takes one parameter:
 -- 	obj - the object to search for in the array. the object must be of the
 -- 	      same type as the objects stored in the array.
 
 local Matrix = require ("Matrix")
 
 -- The Sudoku class stores the matrix array and implements the game logic.
--- Instantiation of self class will automatically generate a new puzzle.
+-- Instantiation of this class will automatically generate a new puzzle.
 
 local Sudoku = {}
 Sudoku.__index = Sudoku
@@ -92,13 +92,17 @@ function Sudoku.Create( matrix )
 	-- stores the 9x9 game data. the puzzle data is stored with revealed
 	-- numbers as 1-9 and hidden numbers for the user to discover as zeros.
 	sudoku.matrix = Matrix.Create( 81 )
-	sudoku.mask = Matrix.Create( 81 )	
+	sudoku.mask = Matrix.Create( 81 )
+	
 	-- initial puzzle is all zeros.
 	sudoku.matrix:Clear()
 
 	-- stores the difficulty level of the puzzle 0 is easiest.
 	sudoku.level = 0
-		-- Randomise the seed 	math.randomseed ( os.time() + 1 )	
+	
+	-- Randomise the seed 
+	math.randomseed ( os.time() + 1 )
+	
 	return sudoku 
 end
 
@@ -114,7 +118,9 @@ end
 	matrix - the 9x9 array to store the puzzle data. the array	
 	contents will be overwritten by self method.]]
 function Sudoku:shuffle(  ) 
-		local dokuline = ""		local tmp		
+		local dokuline = ""
+		local tmp
+		
 	-- create the root sudoku solution. this produces the following
 	-- sudoku:
 	--
@@ -158,7 +164,8 @@ function Sudoku:shuffle(  )
 			end
 		end
 	end
-	--[[print( "\n" )
+	
+--[[print( "\n" )
 	
 	-- Test output by printing it to the console
 	for i = 0, 8, 1 do
@@ -202,7 +209,8 @@ function Sudoku:shuffle(  )
 			--print( "Row " .. row .. " Position1 is " .. row * 9 + (s1 * 3 + c % 3) .. " Position2 is " .. row * 9 + (s2 * 3 + c % 3) )
 		end
 	end
---[[print( "\n" )
+
+--[[print( "\n" )
 	
 	-- Test output by printing it to the console
 	for i = 0, 8, 1 do
@@ -239,7 +247,8 @@ function Sudoku:shuffle(  )
 			self.matrix[row * 9 + (s % 3 * 3 + c2)] = tmp
 		end
 	end
---[[print( "\n" )
+
+--[[print( "\n" )
 	
 	-- Test output by printing it to the console
 	for i = 0, 8, 1 do
@@ -272,8 +281,12 @@ function Sudoku:shuffle(  )
 			self.matrix[(s % 3 * 3 + r1) * 9 + col] = self.matrix[(s % 3 * 3 + r2) * 9 + col]
 			self.matrix[(s % 3 * 3 + r2) * 9 + col] = tmp
 		end
-	end	
-	print( "\n" )	-- Test output by printing it to the console
+	end
+	
+	print( "\n" )
+
+
+	-- Test output by printing it to the console
 	for i = 0, 8, 1 do
 		for j = 1, 9, 1 do
 			dokuline = dokuline .. tostring( self.matrix[ i * 9 +  j ]) .. ','
@@ -485,13 +498,13 @@ end
 -- all the numbers for a cell have been tried and none work, a number
 -- chosen for a previous cell cannot be part of the solution so we have
 -- to back up to the last cell and choose another number. if all the
--- numbers for that cell have also been tried, we back up again. self
+-- numbers for that cell have also been tried, we back up again. this
 -- continues until a value is chosen for all 81 cells.
 --
--- self method takes one parameter:
+-- this method takes one parameter:
 -- 	matrix - the array containing the current state of the puzzle.
 --
--- self method returns 1 if a solution has been found or 0 if there was
+-- this method returns 1 if a solution has been found or 0 if there was
 -- not a solution.]]
 function Sudoku:solve(matrix)
 
@@ -1008,8 +1021,8 @@ function Sudoku:_doMask(matrix, mask)
 	local tried = Matrix.Create(81)
 
 
-	-- start with a cleared out board
-	mask.clear()
+	-- start with a Cleared out board
+	mask.Clear()
 
 	-- randomly add values from the solved board to the masked
 	-- board, picking only cells that cannot be deduced by existing

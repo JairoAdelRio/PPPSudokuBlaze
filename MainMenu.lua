@@ -21,7 +21,8 @@ function scene:createScene( event )
 	local group = self.view
 
 	sudok = sudoku.Create( Matrix.Create(81) )
-	sudok:shuffle()	sudok:shuffle()
+	sudok:shuffle()
+	sudok:shuffle()
 end
 
 
