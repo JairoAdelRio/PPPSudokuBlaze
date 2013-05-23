@@ -113,7 +113,7 @@ end
 	self method takes one parameter:
 	matrix - the 9x9 array to store the puzzle data. the array	
 	contents will be overwritten by self method.]]
-function Sudoku:shuffle(  ) 
+function Sudoku:shuffle(  ) 		local dokuline = ""
 	-- create the root sudoku solution. this produces the following
 	-- sudoku:
 	--
@@ -128,36 +128,34 @@ function Sudoku:shuffle(  )
 	-- 3 4 5 | 6 7 8 | 9 1 2
 	-- 6 7 8 | 9 1 2 | 3 4 5
 	-- 9 1 2 | 3 4 5 | 6 7 8
-	for i = 1, 9, 1 do			
+	for i = 0, 8, 1 do		
 		for j = 1, 9, 1 do
-			self.matrix[i * 9 + j] = (i * 3 + math.floor( i / 3 ) + j ) % 9 + 1
-			print( string.format("Numbers %i , %i", i, j ))
+			self.matrix[i * 9 + j] = (i * 3 + math.floor( i / 3 ) + ( j - 1) ) % 9 + 1
 		end
 	end
-		
+				
 	-- randomly shuffle the numbers in the root sudoku. pick two
 	-- numbers n1 and n2 at random. scan the board and for each
 	-- occurence of n1, replace it with n2 and vice-versa. repeat
 	-- several times. we pick 42 to make Douglas Adams happy.
 	for i = 1, 42, 1 do
 		local n1 = math.random( 9 )
-		local n2
+		local n2		
 		repeat
-			n2 = math.random( 9 )
-
+			n2 = math.random( 9 )
 		until n1 ~= n2
 
-		for row = 1, 9, 1 do
+		for row = 0, 8, 1 do
 			for col = 1, 9, 1 do
-				if matrix[row * 9 + col] == n1 then
-					matrix[row * 9 + col] = n2
-				elseif(matrix[row * 9 + col] == n2) then
-					matrix[row * 9 + col] = n1
+				if self.matrix[row * 9 + col] == n1 then
+					self.matrix[row * 9 + col] = n2
+				elseif(self.matrix[row * 9 + col] == n2) then
+					self.matrix[row * 9 + col] = n1
 				end
 			end
 		end
 	end
-	
+		
 	-- randomly swap corresponding columns from each column of
 	-- subsquares
 	--
@@ -182,13 +180,13 @@ function Sudoku:shuffle(  )
 		local s1 = math.random( 3 )
 		local s2 = math.random( 3 )
 
-		for row = 1, 9, 1 do
+		for row = 0, 8, 1 do
 			local tmp = self.matrix[row * 9 + (s1 * 3 + c % 3)]
 			self.matrix[row * 9 + (s1 * 3 + c % 3)] = self.matrix[row * 9 + (s2 * 3 + c % 3)]
-			self.matrix[row * 9 + (s2 * 3 + c % 3)] = tmp
+			self.matrix[row * 9 + (s2 * 3 + c % 3)] = tmp						print( "Row is " .. row .. "tempt is " .. " C is " .. c .. " S1 is " .. s1 .. " S2 is " .. s2  )			print( "Position1 is " .. row * 9 + (s1 * 3 + c % 3) .. " Position2 is " .. row * 9 + (s2 * 3 + c % 3) )
 		end
 	end
-
+	-- Test output by printing it to the console	for i = 0, 8, 1 do		for j = 1, 9, 1 do			dokuline = dokuline .. self.matrix[j + ( i * 9 )] .. ','		end		dokuline = dokuline .. '\n'		print( dokuline )	end
 	-- randomly swap columns within each column of subsquares
 	--
 	--         | | |
@@ -209,13 +207,13 @@ function Sudoku:shuffle(  )
 		local c1 = math.random(3)
 		local c2 = math.random(3)
 
-		for row = 1, 9, 1 do
+		for row = 0, 8, 1 do
 			local tmp = self.matrix[row * 9 + (s % 3 * 3 + c1)]
 			self.matrix[row * 9 + (s % 3 * 3 + c1)] = self.matrix[row * 9 + (s % 3 * 3 + c2)]
 			self.matrix[row * 9 + (s % 3 * 3 + c2)] = tmp
 		end
 	end
-
+
 	-- randomly swap rows within each row of subsquares
 	--
 	-- . . . | . . . | . . .
