@@ -6,16 +6,22 @@
 -- Managed with http://CoronaProjectManager.com
 --
 -- Copyright 2013 . All Rights Reserved.
--- local Matrix = require( "Matrix" )
+-- 
+local Matrix = require( "Matrix" )
 local sudoku = require("sg")
 local storyboard = require( "storyboard" )
 local scene = storyboard.newScene()
-
--- local forward references should go here --
+
+
+-- local forward references should go here --
+
 
 -- Called when the scene's view does not exist:
 function scene:createScene( event )
-	local group = self.view	sudok = sudoku.Create( Matrix.Create(81) )	sudok:shuffle()
+	local group = self.view
+
+	sudok = sudoku.Create( Matrix.Create(81) )
+	sudok:shuffle()	sudok:shuffle()
 end
 
 

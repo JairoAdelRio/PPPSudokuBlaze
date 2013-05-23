@@ -98,7 +98,7 @@ function Sudoku.Create( matrix )
 
 	-- stores the difficulty level of the puzzle 0 is easiest.
 	sudoku.level = 0
-	
+		-- Randomise the seed 	math.randomseed ( os.time() + 1 )	
 	return sudoku 
 end
 
@@ -113,7 +113,8 @@ end
 	self method takes one parameter:
 	matrix - the 9x9 array to store the puzzle data. the array	
 	contents will be overwritten by self method.]]
-function Sudoku:shuffle(  ) 		local dokuline = ""
+function Sudoku:shuffle(  ) 
+		local dokuline = ""		local tmp		
 	-- create the root sudoku solution. this produces the following
 	-- sudoku:
 	--
@@ -140,9 +141,11 @@ function Sudoku:shuffle(  ) 		local dokuline = ""
 	-- several times. we pick 42 to make Douglas Adams happy.
 	for i = 1, 42, 1 do
 		local n1 = math.random( 9 )
-		local n2		
+		local n2
+		
 		repeat
-			n2 = math.random( 9 )
+			n2 = math.random( 9 )
+
 		until n1 ~= n2
 
 		for row = 0, 8, 1 do
@@ -155,7 +158,17 @@ function Sudoku:shuffle(  ) 		local dokuline = ""
 			end
 		end
 	end
-		
+	--[[print( "\n" )
+	
+	-- Test output by printing it to the console
+	for i = 0, 8, 1 do
+		for j = 1, 9, 1 do
+			dokuline = dokuline .. tostring( self.matrix[ i * 9 +  j ]) .. ','
+		end
+		dokuline = dokuline .. " Row " .. i .. '\n'
+		print( dokuline )
+	end]]	
+
 	-- randomly swap corresponding columns from each column of
 	-- subsquares
 	--
@@ -177,16 +190,29 @@ function Sudoku:shuffle(  ) 		local dokuline = ""
 	-- note that we cannot swap corresponding rows from each row of
 	-- subsquares.
 	for c = 1, 42, 1 do 
-		local s1 = math.random( 3 )
-		local s2 = math.random( 3 )
+		local s1 = math.random( 2 )
+		local s2 = math.random( 2 ) 
 
 		for row = 0, 8, 1 do
-			local tmp = self.matrix[row * 9 + (s1 * 3 + c % 3)]
+			tmp = self.matrix[row * 9 + (s1 * 3 + c % 3)]
 			self.matrix[row * 9 + (s1 * 3 + c % 3)] = self.matrix[row * 9 + (s2 * 3 + c % 3)]
-			self.matrix[row * 9 + (s2 * 3 + c % 3)] = tmp						print( "Row is " .. row .. "tempt is " .. " C is " .. c .. " S1 is " .. s1 .. " S2 is " .. s2  )			print( "Position1 is " .. row * 9 + (s1 * 3 + c % 3) .. " Position2 is " .. row * 9 + (s2 * 3 + c % 3) )
+			self.matrix[row * 9 + (s2 * 3 + c % 3)] = tmp
+			
+			--print( "Row is " .. row .. "tempt is " ..  tostring(tmp) .. " C is " .. c .. " S1 is " .. s1 .. " S2 is " .. s2  )
+			--print( "Row " .. row .. " Position1 is " .. row * 9 + (s1 * 3 + c % 3) .. " Position2 is " .. row * 9 + (s2 * 3 + c % 3) )
 		end
 	end
-	-- Test output by printing it to the console	for i = 0, 8, 1 do		for j = 1, 9, 1 do			dokuline = dokuline .. self.matrix[j + ( i * 9 )] .. ','		end		dokuline = dokuline .. '\n'		print( dokuline )	end
+--[[print( "\n" )
+	
+	-- Test output by printing it to the console
+	for i = 0, 8, 1 do
+		for j = 1, 9, 1 do
+			dokuline = dokuline .. tostring( self.matrix[ i * 9 +  j ]) .. ','
+		end
+		dokuline = dokuline .. " Row " .. i .. '\n'
+		print( dokuline )
+	end]]
+
 	-- randomly swap columns within each column of subsquares
 	--
 	--         | | |
@@ -204,8 +230,8 @@ function Sudoku:shuffle(  ) 		local dokuline = ""
 	-- . . . | . . . | . . .
 	-- . . . | . . . | . . .
 	for s = 1, 42, 1 do
-		local c1 = math.random(3)
-		local c2 = math.random(3)
+		local c1 = math.random( 2 )
+		local c2 = math.random( 2 )
 
 		for row = 0, 8, 1 do
 			local tmp = self.matrix[row * 9 + (s % 3 * 3 + c1)]
@@ -213,7 +239,17 @@ function Sudoku:shuffle(  ) 		local dokuline = ""
 			self.matrix[row * 9 + (s % 3 * 3 + c2)] = tmp
 		end
 	end
-
+--[[print( "\n" )
+	
+	-- Test output by printing it to the console
+	for i = 0, 8, 1 do
+		for j = 1, 9, 1 do
+			dokuline = dokuline .. tostring( self.matrix[ i * 9 +  j ]) .. ','
+		end
+		dokuline = dokuline .. " Row " .. i .. '\n'
+		print( dokuline )
+	end]]
+
 	-- randomly swap rows within each row of subsquares
 	--
 	-- . . . | . . . | . . .
@@ -228,14 +264,22 @@ function Sudoku:shuffle(  ) 		local dokuline = ""
 	-- . . . | . . . | . . .
 	-- . . . | . . . | . . .
 	for s = 1, 42, 1 do
-		local r1 = math.random( 3)
-		local r2 = math.random( 3)
+		local r1 = math.random( 2 ) 
+		local r2 = math.random( 2 )
 
 		for col = 1, 9, 1 do
 			local tmp = self.matrix[(s % 3 * 3 + r1) * 9 + col]
 			self.matrix[(s % 3 * 3 + r1) * 9 + col] = self.matrix[(s % 3 * 3 + r2) * 9 + col]
 			self.matrix[(s % 3 * 3 + r2) * 9 + col] = tmp
 		end
+	end	
+	print( "\n" )	-- Test output by printing it to the console
+	for i = 0, 8, 1 do
+		for j = 1, 9, 1 do
+			dokuline = dokuline .. tostring( self.matrix[ i * 9 +  j ]) .. ','
+		end
+		dokuline = dokuline .. " Row " .. i .. '\n'
+		print( dokuline )
 	end
 
 	-- we could also randomly swap rows and columns of subsquares
