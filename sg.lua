@@ -382,7 +382,8 @@ function Sudoku:getAvailable( cell, avail )
 	local arr = {}
 
 	row = math.floor(cell / 9)
-	col = cell % 9
+	col = cell % 9
+
 
 	if col == 0 then
 		col = 1
@@ -641,7 +642,7 @@ function Sudoku:maskBoard()
 	local val
 	local avail = Matrix.Create(9)
 	local tried = Matrix.Create(81)
-
+	local dokuline
 
 	-- start with a cleared out board
 	self.mask:Clear()
@@ -806,9 +807,12 @@ function Sudoku:maskBoard()
 	-- try another.
 	repeat
 		repeat
-			cell = math.random( 81 )
+			cell = math.random( 81 )
+
 		until (self.mask[cell] ~= 0) or (tried[cell] ~= 0)
-		print( "stuck")		
+
+		print( "stuck")
+		
 		val = self.mask[cell]
 
 		local t = self
@@ -823,8 +827,9 @@ function Sudoku:maskBoard()
 			
 		tried[cell] = 0
 		hints = hints -1 
-		print( "Hints " .. hints )
-	until hints == 0 
+
+		print( "Hints " .. hints )
+	until hints <= 0 
 
 	-- at this point we have a board with about 20 to 25 hints and a
 	-- single solution.
