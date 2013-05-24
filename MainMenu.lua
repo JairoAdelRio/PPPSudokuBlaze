@@ -22,7 +22,7 @@ function scene:createScene( event )
 
 	sudok = sudoku.Create( Matrix.Create(81) )
 	sudok:shuffle()
-	sudok:shuffle()
+	sudok:maskBoard()
 end
 
 

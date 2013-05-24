@@ -316,7 +316,7 @@ function Sudoku:shuffle(  )
 	-- mirror left to right and/or top to bottom.
 end
 
-	-- self method randomly masks values in a solved sudoku board. for the
+--[[ this method randomly masks values in a solved sudoku board. for the
 	-- easiest level it will hide 5 cells from each 3x3 subsquare.
 	--
 	-- self method makes no attempt to ensure a unique solution and simply
@@ -329,7 +329,7 @@ end
 	-- 	matrix - the game array completely initialized with the game
 	-- 		 data.
 	-- 	mask - an array to store the 9x9 mask data. the mask array will
-	-- 	       contain the board that will be presented to the user.
+-- 	       contain the board that will be presented to the user.]]
 function Sudoku:maskBoardEasy (matrix, mask) 
 	local i
 	local j
@@ -371,7 +371,7 @@ end
 -- 		of available values without returning them.
 --
 -- self method returns the length of the data in the available array.]]
-function Sudoku:getAvailable( matrix, cell, avail )
+function Sudoku:getAvailable( cell, avail )
 	local i
 	local j
 	local row
@@ -381,28 +381,37 @@ function Sudoku:getAvailable( matrix, cell, avail )
 
 	local arr = {}
 
-
 	row = math.floor(cell / 9)
-	col = cell % 9
+	col = cell % 9
 
+	if col == 0 then
+		col = 1
+	end
+	
+	if row == 9 then 
+		row = 0
+	end
+	
 	-- row
 	for i = 1, 9, 1 do
 
 		j = row * 9 + i
-			
+
+		
 		if(self.matrix[j] > 0) then
-			arr[self.matrix[j] - 1] = 1
+			arr[self.matrix[j]] = 1
 		end
 	end
 
 	-- col
-	for i = 1, 9 , 1 do
+	for i = 0, 8 , 1 do
 
 		j = i * 9 + col
-		
-		if(matrix[j] > 0) then
 
-			arr[self.matrix[j] - 1] = 1
+
+		if(self.matrix[j] > 0) then
+
+			arr[self.matrix[j]] = 1
 		end
 	end
 
@@ -410,10 +419,14 @@ function Sudoku:getAvailable( matrix, cell, avail )
 	r = row - row % 3
 	c = col - col % 3
 	
+	if c == 0 then
+		c = 1
+	end
+	
 	for i = r, r + 3, 1 do
 		for j = c,  c + 3, 1 do
-			if matrix[i * 9 + j] > 0 then
-				arr[matrix[i * 9 + j] - 1] = 1
+			if self.matrix[i * 9 + j] > 0 then
+			arr[self.matrix[i * 9 + j]] = 1
 			end
 				
 			j = 0
@@ -474,8 +487,8 @@ function Sudoku:getCell (matrix)
 
 	for i = 1, 81, 1 do
 
-		if matrix[i] == 0 then
-			j = self:getAvailable( matrix, i, nil )
+		if self.matrix[i] == 0 then
+			j = self:getAvailable( i, nil )
 
 			if j < n then
 				n = j
@@ -564,7 +577,7 @@ end
 --
 -- self method returns the number of solutions found or 0 if there was
 -- not a solution.]]
-function Sudoku:enumSolutions(matrix)
+function Sudoku:enumSolutions()
 
 	local i
 	local j
@@ -580,7 +593,7 @@ function Sudoku:enumSolutions(matrix)
 	local avail = Matrix.Create(9)
 
 
-	j = self:getAvailable(matrix, cell, avail)
+	j = self:getAvailable( cell, avail )
 		
 	for i = 1,  j, 1 do
 	
@@ -588,7 +601,7 @@ function Sudoku:enumSolutions(matrix)
 		-- how many solutions are produced.
 		self.matrix[cell] = avail[i]
 
-		ret = ret + self.enumSolutions(matrix)
+		ret = ret + self.enumSolutions()
 
 		-- for the purposes of the mask function, if we found
 		-- more than one solution, we can quit searching now
@@ -658,7 +671,7 @@ function Sudoku:maskBoard()
 		val = self.matrix[cell]
 
 		-- see how many values can go in the cell.
-		i = self:getAvailable( self.mask, cell, nil )
+		i = self:getAvailable( cell, nil )
 
 		if i > 1 then
 		
@@ -689,7 +702,7 @@ function Sudoku:maskBoard()
 					if self.mask[j] == 0 then
 						-- get the values that can be used in
 						-- the cell.
-						a = self:getAvailable( self.mask, j, avail )
+						a = self:getAvailable(  j, avail )
 	
 						-- see if our value is in the available
 						-- value list.
@@ -719,7 +732,7 @@ function Sudoku:maskBoard()
 						j = i * 9 + col
 							
 						if self.mask[j] == 0 then
-							a = self:getAvailable( self.mask, j, avail )
+							a = self:getAvailable( j, avail )
 								
 							for j = 1, a, 1 do
 								if avail[j] == val  then
@@ -755,7 +768,7 @@ function Sudoku:maskBoard()
 								
 								if self.mask[k] == 0 then
 
-									a = self.getAvailable(self.mask, k, avail)
+									a = self.getAvailable( k, avail)
 									
 									for k = 1, a, 1 do
 
@@ -786,17 +799,16 @@ function Sudoku:maskBoard()
 
 	until n == 81
 
-	-- at self point we should have a masked board with about 40 to
+	-- at this point we should have a masked board with about 40 to
 	-- 50 hints. randomly select hints and remove them. for each
 	-- removed hint, see if there is still a single solution. if so,
 	-- select another hint and repeat. if not, replace the hint and
 	-- try another.
 	repeat
 		repeat
-			cell = math.random( 81 )
-
+			cell = math.random( 81 )
 		until (self.mask[cell] ~= 0) or (tried[cell] ~= 0)
-
+		print( "stuck")		
 		val = self.mask[cell]
 
 		local t = self
@@ -811,11 +823,21 @@ function Sudoku:maskBoard()
 			
 		tried[cell] = 0
 		hints = hints -1 
-
+		print( "Hints " .. hints )
 	until hints == 0 
 
-	-- at self point we have a board with about 20 to 25 hints and a
+	-- at this point we have a board with about 20 to 25 hints and a
 	-- single solution.
+	
+	-- Test output by printing it to the console
+	for i = 0, 8, 1 do
+		for j = 1, 9, 1 do
+			dokuline = dokuline .. tostring( self.mask[ i * 9 +  j ]) .. ','
+		end
+		dokuline = dokuline .. " Row " .. i .. '\n'
+		print( dokuline )
+	end
+
 end
 
 
