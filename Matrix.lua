@@ -26,7 +26,7 @@ function Matrix.Create( arraySize )
 end
 
 function Matrix:Clear()
-	for i = 1, self.arraySize, 1 do
+	for i = 1, self.arraySize, 1 do		self[i] = 0
 	end
 end
 
