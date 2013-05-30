@@ -285,15 +285,15 @@ function Sudoku:shuffle( matrix )
 	
 	print( "\n" )
 
-
 	-- Test output by printing it to the console
 	for i = 0, 8, 1 do
 		for j = 1, 9, 1 do
 			dokuline = dokuline .. tostring( self.matrix[ i * 9 +  j ]) .. ','
 		end
 		dokuline = dokuline .. " Row " .. i .. '\n'
-		print( dokuline )
 	end
+	
+	print( dokuline )
 
 	-- we could also randomly swap rows and columns of subsquares
 	--
@@ -335,11 +335,19 @@ function Sudoku:maskBoardEasy ( matrix, mask )
 	local j
 	local k
 	
+	print( "Mask is " .. tostring(mask) )
+	
 	for i = 1, 81, 1 do
 		mask[i] = matrix[i]
 	end
 	
-	for i = 1, 3, 1 do
+	-- at this point we have a board with about 20 to 25 hints and a
+	-- single solution.
+	local dokuline = ""
+	
+	print( "\n")
+	
+	for i = 0, 2, 1 do
 		for j = 1, 3, 1 do
 			-- for each 3x3 subsquare, pick 5 random cells
 			-- and mask them.
@@ -347,13 +355,29 @@ function Sudoku:maskBoardEasy ( matrix, mask )
 				local c
 				
 				repeat
-					c = math.random( 9)
-				until mask[(i * 3 + math.floor(c / 3)) * 9 + j * 3 + c % 3] == 0
+					c = math.random( 9 ) - 1
+					print( "Mask at check is " .. (i * 3 + math.floor(c / 3)) * 9 + j * 3 + c % 3)
+				until mask[(i * 3 + math.floor(c / 3)) * 9 + j * 3 + c % 3] ~= 0
 		
 				mask[(i * 3 + math.floor(c / 3)) * 9 + j * 3 + c % 3] = 0
 			end
 		end
 	end
+	
+	-- at this point we have a board with about 20 to 25 hints and a
+	-- single solution.
+	
+	-- Test output by printing it to the console;/
+	for i = 0, 8, 1 do
+		for j = 1, 9, 1 do
+			print("Indexing " .. i * 9 + j )
+			dokuline = dokuline .. tostring( mask[ i * 9 +  j ] ) .. ','
+		end
+		dokuline = dokuline .. " Row " .. i .. '\n'
+
+	end
+	
+	print( dokuline )
 
 end
 
@@ -380,10 +404,12 @@ function Sudoku:getAvailable( matrix, cell, avail )
 	local c
 
 	local arr = {}
-	print( "Sudoku:getAvailable Matrix is " .. tostring(matrix) .. " cell is " .. cell .. " avail is " .. tostring(avail) )
+
+	print( "Sudoku:getAvailable Matrix is " .. tostring(matrix) .. " cell is " .. cell .. " avail is " .. tostring(avail) )
 	row = math.floor(cell / 9)
 	col = cell % 9
-
+
+
 	if col == 0 then
 		col = 1
 	end
@@ -391,11 +417,15 @@ function Sudoku:getAvailable( matrix, cell, avail )
 	if row == 9 then 
 		row = 0
 	end
-		print( "Row is " .. row )
+	
+	print( "Row is " .. row )
 	-- row
-	for i = 1, 9, 1 do
-		j = row * 9 + i
-			print ( "J is " .. j .. " matrix is " .. tostring(matrix[j]))
+	for i = 1, 9, 1 do
+
+		j = row * 9 + i
+
+		
+	print ( "J is " .. j .. " matrix is " .. tostring(matrix[j]))
 		if( matrix[j] > 0 ) then
 			arr[ matrix[j] ] = 1
 		end
@@ -483,7 +513,8 @@ function Sudoku:getCell ( matrix )
 	local j
 	local avail = Matrix.Create(9)
 
-	for i = 1, 81, 1 do
+	for i = 1, 81, 1 do
+
 		if matrix[i] == 0 then
 			j = self:getAvailable( matrix, i, nil )
 
@@ -522,7 +553,9 @@ function Sudoku:solve( matrix )
 	local j
 	local ret = 0
 	local cell = self:getCell( matrix )
-	local avail = Matrix.Create(9)		print("Sudoku:solve( matrix )" .. tostring(matrix) .. " cell is " .. cell )
+	local avail = Matrix.Create(9)
+	
+	print("Sudoku:solve( matrix )" .. tostring(matrix) .. " cell is " .. cell )
 	-- since self is the solver that is following the sudoku rules,
 	-- if getCell returns -1 we are guaranteed to have found a valid
 	-- solution. in self case we just return 1 (for 1 solution, see
@@ -530,10 +563,12 @@ function Sudoku:solve( matrix )
 	if cell == -1 then
 		return 1
 	end
-
+
+
 	j = self:getAvailable( matrix, cell, avail )
 		
-	for i = 1, j, 1 do	print ( "Cell is " .. cell .. " While avail[i] is " .. tostring(avail[i]))
+	for i = 1, j, 1 do
+	print ( "Cell is " .. cell .. " While avail[i] is " .. tostring(avail[i]))
 		matrix[cell] = avail[i]
 
 		-- if we found a solution, return 1 to the caller.
@@ -851,8 +886,6 @@ end
 -- self method returns true if the value can be used in the cell, false
 -- otherwise.]]
 function Sudoku:_checkVal(matrix, row, col, val) 
-		local i
-		local j
 		local r
 		local c
 		
@@ -860,7 +893,6 @@ function Sudoku:_checkVal(matrix, row, col, val)
 		-- exists in the row. do not look at the value of the cell in
 		-- the column we are trying. repeat for each zone.
 		for i = 1, 9, 1 do
-
 			if((i ~= col) and (matrix[row * 9 + i] == val)) then
 				return false
 			end
@@ -878,9 +910,17 @@ function Sudoku:_checkVal(matrix, row, col, val)
 		r = row - row % 3
 		c = col - col % 3
 		
-		for i = r, i < r + 3,  1 do
-			for j = c,  j < c + 3,  1 do
-				if (((i ~= row) or (j ~= col)) and (matrix[i * 9 + j] == val)) then
+		if c == 0 then
+			c = 1
+		end
+			
+		print("R is " .. r .. " C is " .. c )
+		
+		for i = r, r + 3,  1 do
+			print( "I is " .. i )
+			for j = c,  c + 2,  1 do
+				print ( "Index is " .. i  * 9 + j)
+				if ( ((i ~= row) or (j ~= col)) and (matrix[i * 9 + j] == val)) then
 					return false
 				end
 			end
@@ -888,7 +928,9 @@ function Sudoku:_checkVal(matrix, row, col, val)
 		
 		return true
 	end
--- 'public' methods
+
+
+-- 'public' methods
 
 --[[self method checks whether a value will work in a given cell. it
 -- checks each zone to ensure the value is not already used.
@@ -901,8 +943,8 @@ function Sudoku:_checkVal(matrix, row, col, val)
 -- self method returns true if the value can be used in the cell, false
 -- otherwise.]]
 function Sudoku:checkVal(row, col, val)
-
-	return self._checkVal(self.matrix, row, col, val)
+	row = row - 1
+	return self:_checkVal(self.matrix, row, col, val)
 end
 
 --[[ self method sets the value for a particular cell. self is called by
@@ -946,7 +988,8 @@ function Sudoku:_newGame()
 		-- generate hints for the solved board. if the level is easy,
 		-- use the easy mask function.
 		if self.level == 0 then
-			self:maskBoardEasy(self.matrix, mask)
+			self:maskBoardEasy(self.matrix, mask)
+
 		else
 		
 			-- the level is medium or greater. use the advanced mask
@@ -981,7 +1024,7 @@ function Sudoku:_newGame()
 
 function Sudoku:_doHints(matrix, mask, tried, hints)
 	
-		-- at self point we should have a masked board with about 40 to
+		-- at this point we should have a masked board with about 40 to
 		-- 50 hints. randomly select hints and remove them. for each
 		-- removed hint, see if there is still a single solution. if so,
 		-- select another hint and repeat. if not, replace the hint and
@@ -1211,7 +1254,8 @@ function Sudoku:newGame()
 	local hints = 0
 	local cell
 	local mask = Matrix.Create( 81 )
-	print("Sudoku:newGame")
+
+	print("Sudoku:newGame")
 	-- clear out the game matrix.
 	self.matrix:Clear()
 
@@ -1231,7 +1275,7 @@ function Sudoku:newGame()
 		self.matrix = mask
 
 		--timeDiff.start()
-		self:done()
+		--self:done()
 	else
 		-- the level is medium or greater. use the advanced mask
 		-- function to generate a minimal sudoku puzzle with a

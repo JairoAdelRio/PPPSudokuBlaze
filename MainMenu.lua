@@ -21,7 +21,14 @@ function scene:createScene( event )
 	local group = self.view
 
 	sudok = sudoku.Create( Matrix.Create(81) )
-	sudok:newGame()
+	sudok:newGame()
+	
+	for i = 1, 9, 1 do
+		if sudok:checkVal( 1, 1, i ) then
+			print("Can't use " .. i .. " here" )
+			break
+		end
+	end
 end
 
 

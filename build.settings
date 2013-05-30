@@ -19,10 +19,10 @@ settings =
 
 	orientation =
 	{
-		default ="landscapeLeft",
+		default ="portrait",
 		supported =
 		{
-			"landscapeRight"
+			"portrait"
 		},
 	},
 
