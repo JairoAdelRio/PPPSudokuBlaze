@@ -900,8 +900,7 @@ function Sudoku:_checkVal(matrix, row, col, val)
 
 		-- check col
 		for i = 1, 9, 1 do
-		
-			if((i ~= row) and (matrix[i * 9 + col] == val)) then
+			if((i ~= row + 1) and (matrix[( i - 1 ) * 9 + col] == val)) then
 				return false
 			end
 		end
@@ -914,12 +913,12 @@ function Sudoku:_checkVal(matrix, row, col, val)
 			c = 1
 		end
 			
-		print("R is " .. r .. " C is " .. c )
+		--print("R is " .. r .. " C is " .. c )
 		
 		for i = r, r + 3,  1 do
-			print( "I is " .. i )
+			--print( "I is " .. i )
 			for j = c,  c + 2,  1 do
-				print ( "Index is " .. i  * 9 + j)
+				--print ( "Index is " .. i  * 9 + j)
 				if ( ((i ~= row) or (j ~= col)) and (matrix[i * 9 + j] == val)) then
 					return false
 				end
