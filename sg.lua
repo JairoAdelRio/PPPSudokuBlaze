@@ -319,13 +319,13 @@ end
 --[[ this method randomly masks values in a solved sudoku board. for the
 	-- easiest level it will hide 5 cells from each 3x3 subsquare.
 	--
-	-- self method makes no attempt to ensure a unique solution and simply
+	-- this method makes no attempt to ensure a unique solution and simply
 	-- (naively) just masks random values. usually there will be only one
 	-- solution however, there may be two or more. i've seen boards with as
-	-- many as 6 or 7 solutions using self function, though that is pretty
+	-- many as 6 or 7 solutions using this function, though that is pretty
 	-- rare.
 	--
-	-- self method takes two parameters:
+	-- this method takes two parameters:
 	-- 	matrix - the game array completely initialized with the game
 	-- 		 data.
 	-- 	mask - an array to store the 9x9 mask data. the mask array will
@@ -370,7 +370,7 @@ function Sudoku:maskBoardEasy ( matrix, mask )
 	-- Test output by printing it to the console;/
 	for i = 0, 8, 1 do
 		for j = 1, 9, 1 do
-			print("Indexing " .. i * 9 + j )
+			--print("Indexing " .. i * 9 + j )
 			dokuline = dokuline .. tostring( mask[ i * 9 +  j ] ) .. ','
 		end
 		dokuline = dokuline .. " Row " .. i .. '\n'
@@ -613,7 +613,7 @@ function Sudoku:enumSolutions( matrix )
 	local cell = self:getCell( matrix )
 
 	-- if getCell returns -1 the board is completely filled which
-	-- means we found a solution. return 1 for self solution.
+	-- means we found a solution. return 1 for this solution.
 	if cell == -1 then
 		return 1
 	end
@@ -913,13 +913,17 @@ function Sudoku:_checkVal(matrix, row, col, val)
 			c = 1
 		end
 			
+		if r == 0 then
+			r = 1
+		end
+		
 		--print("R is " .. r .. " C is " .. c )
 		
-		for i = r, r + 3,  1 do
+		for i = r, r + 2,  1 do
 			--print( "I is " .. i )
 			for j = c,  c + 2,  1 do
 				--print ( "Index is " .. i  * 9 + j)
-				if ( ((i ~= row) or (j ~= col)) and (matrix[i * 9 + j] == val)) then
+				if ( ((i ~= ( row + 1 ))or (j ~= col)) and (matrix[(i - 1) * 9 + j] == val)) then
 					return false
 				end
 			end
@@ -1031,7 +1035,6 @@ function Sudoku:_doHints(matrix, mask, tried, hints)
 		if hints > 0 then
 
 			repeat
-
 				cell = math.random( 81 )
 			until((mask[cell] ~= 0) or (tried[cell] ~= 0))
 
@@ -1056,7 +1059,7 @@ function Sudoku:_doHints(matrix, mask, tried, hints)
 
 			self.save = self.matrix
 			self.matrix = mask
-			self:done()
+			--self:done()
 		end
 
 		--console.log(hints)

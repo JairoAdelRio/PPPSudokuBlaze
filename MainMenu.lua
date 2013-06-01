@@ -24,7 +24,7 @@ function scene:createScene( event )
 	sudok:newGame()
 	
 	for i = 1, 9, 1 do
-		if not sudok:checkVal( 1, 1, i ) then
+		if not sudok:checkVal( 1, 4, i ) then
 			print("Can't use " .. i .. " here" )
 			--break
 		end
